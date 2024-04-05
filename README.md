@@ -1,7 +1,13 @@
-# SS-Colored-SR-Lables
-Changes the Star Rating difficulty lable colors to represent the actual Star Rating of the map
+## How to install
+#### Open the Scoresaber-Colored-Labels.js file and paste the code into tampermonkey, this should work for greasemonkey too but I never tested so don't take my word on it.
 
-# How to instal :D ;) :p
-just open the Scoresaber-Colored-Lables.js file and paste the code into tampermonkey, this might work for greasemonkey too but idk i never tested it :D :D :D
+## Version History
+#### 1.1:
+- Fixed part of code that took over a second to update the actual color of the diff label
+- Fixed the misspelling of "label" in code cause it was bugging me
+- Replaced all the For and If trees with a simple One-Call function
 
-enjoy
+## Potential Future Plans
+- Make all none ranked maps have their own singular color so they don't stand out
+- Add color gradient to PP Values as well (Maybe)
+- Give all Spectral ranked maps a special Rainbow diff label
