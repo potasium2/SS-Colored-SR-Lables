@@ -1,13 +1,18 @@
 // ==UserScript==
 // @name         Scoresaber SR Colored Labels
 // @namespace    SS Star Rating Color
-// @version      1.1
+// @version      1.2
 // @description  Changes the Star Rating difficulty label colors to represent the actual Star Rating of the map
 // @author       potasium_
 // @updateURL    https://github.com/potasium2/SS-Colored-SR-Lables/blob/main/Scoresaber-Colored-Labels.js
 // @downloadURL  https://github.com/potasium2/SS-Colored-SR-Lables/blob/main/Scoresaber-Colored-Labels.js
 // @match        https://scoresaber.com/*
 // ==/UserScript==
+
+let Enable_PP_Recolor = true; // Enables PP Recoloring on both profiles and leaderboards
+let PP_Leaderboard_Color = "rgb(4, 146, 232)" // Score saber default is rgb(137,146,232)
+let Enable_SR_Label_Recolor = true; // Enables Star Rating Label Recoloring
+let Simplified_Star_Ratings = false; // Compresses Star Ratings by a Log_13 Curve So Front Pages can be more diverse (i;e 13 Stars = 10 Stars)
 
 // Color Interpolation Code
 function getLerpedColor(points, t) {
@@ -48,17 +53,45 @@ function lerp(a, b, t) {
 // Change points here - Use the following format:
 // [Star Rating, [Red, Green, Blue]]
 let points = [
-    [0, [85, 202, 255]],
-    [1, [85, 202, 255]],
-    [2.5, [8, 255, 179]],
-    [5, [0, 173, 17]],
-    [7, [206, 185, 2]],
-    [9, [226, 113, 0]],
-    [10, [212, 31, 0]],
-    [11, [221, 0, 110]],
+    [0, [255, 255, 255]],
+    [1, [59, 225, 237]],
+    [2.5, [51, 239, 182]],
+    [5, [35, 236, 55]],
+    [7, [255, 233, 45]],
+    [9, [255, 132, 0]],
+    [10, [224, 5, 5]],
+    [11, [230, 12, 124]],
     [12, [126, 0, 186]],
-    [13.25, [0, 0, 0]],
-    [15, [0, 0, 0]],
+    [13, [0, 35, 148]],
+    [14, [0, 0, 0]],
+];
+
+let pointsAlternative = [
+    [0, [59, 225, 237]],
+    [2.5, [59, 225, 237]],
+    [5, [51, 239, 182]],
+    [6, [35, 236, 55]],
+    [7, [255, 233, 45]],
+    [8, [255, 132, 0]],
+    [8.5, [224, 5, 5]],
+    [9, [230, 12, 124]],
+    [9.5, [126, 0, 186]],
+    [10, [0, 35, 148]],
+    [10.25, [0, 0, 0]],
+];
+
+
+let PPPoints = [
+    [0, [255, 175, 175]],
+    [50, [255, 175, 144]],
+    [100, [249, 137, 0]],
+    [200, [173, 205, 1]],
+    [300, [14, 198, 0]],
+    [400, [0, 216, 148]],
+    [500, [0, 35, 148]],
+    [600, [128, 0, 175]],
+    [700, [80, 0, 0]],
+    [800, [0, 0, 0]],
 ];
 
 function getBaseLog(x, y) {
@@ -66,12 +99,34 @@ function getBaseLog(x, y) {
 }
 
 // Map Lable Update Code
-function updateMap(Maps) {
+function updateMapLabel(Maps) {
     for(let i = 0; i < Maps.length; i++) {
-            let starRating = String(Maps[i].innerHTML).slice(0, -1);
-            let BackColor = getLerpedColor(points, starRating);
-            Maps[i].style.setProperty("background-color", BackColor, "important");
+        let starRating = String(Maps[i].innerHTML).slice(0, -1);
+        if(!Maps[i].style.backgroundColor && Simplified_Star_Ratings){
+            Maps[i].innerHTML = String(Math.round((10 * getBaseLog(14, Number(starRating) + 1)) * 100) / 100) + "★";
         }
+        starRating = String(Maps[i].innerHTML).slice(0, -1);
+        let BackColor = getLerpedColor(points, starRating);
+        if(Simplified_Star_Ratings){
+            BackColor = getLerpedColor(pointsAlternative, starRating);
+        }
+        Maps[i].style.setProperty("background-color", BackColor, "important");
+    }
+}
+
+function updatePP(pp, ppBack){
+    for(let i = 0; i < ppBack.length; i++) {
+        let BackColor = getLerpedColor(PPPoints, Number(String(pp[i * 2].innerHTML).slice(0, -5)));
+        ppBack[i].style.setProperty("background-color", BackColor, "important");
+    }
+}
+
+function updatePPLeaderboard(pp) {
+    for(let i = 0; i < pp.length; i++){
+        if(!pp[i].style.color){
+            pp[i].style.setProperty("color", PP_Leaderboard_Color, "important");
+        }
+    }
 }
 
 (async function() {
@@ -79,33 +134,40 @@ function updateMap(Maps) {
 
     while(true){
         await new Promise(r => setTimeout(r, 1));
-        // Instead of writing some complex code to just filter for the "svelte-5pua3r" and "svelte-aoq06a" parts from the classes
-        // It's just easier to put them into their own variables - This is slower but also i dont care :p
-        var expertPlusMaps = document.getElementsByClassName("tag expert-plus svelte-5pua3r");
-        var expertMaps = document.getElementsByClassName("tag expert svelte-5pua3r");
-        var hardMaps = document.getElementsByClassName("tag hard svelte-5pua3r");
-        var normalMaps = document.getElementsByClassName("tag normal svelte-5pua3r");
-        var easyMaps = document.getElementsByClassName("tag easy svelte-5pua3r");
 
-        var expertPlusLabel = document.getElementsByClassName("tag mb-2 expert-plus svelte-aoq06a")
-        var expertLabel = document.getElementsByClassName("tag mb-2 expert svelte-aoq06a")
-        var hardLabel = document.getElementsByClassName("tag mb-2 hard svelte-aoq06a")
-        var normalLabel = document.getElementsByClassName("tag mb-2 normal svelte-aoq06a")
-        var easyLabel = document.getElementsByClassName("tag mb-2 easy svelte-aoq06a")
+        let allMaps = document.querySelectorAll("div[class*='tag ']");
+
+        // I cant use the same query selector for both the individual diff labels and ranked/page labels or some code will break
+        // Instead I leave the individual diff labels on their own since they take up less time to sort through than the ranked/page labels
+        let expertPlusLabel = document.getElementsByClassName("tag mb-2 expert-plus svelte-aoq06a");
+        let expertLabel = document.getElementsByClassName("tag mb-2 expert svelte-aoq06a");
+        let hardLabel = document.getElementsByClassName("tag mb-2 hard svelte-aoq06a");
+        let normalLabel = document.getElementsByClassName("tag mb-2 normal svelte-aoq06a");
+        let easyLabel = document.getElementsByClassName("tag mb-2 easy svelte-aoq06a");
+
+        let pp = document.getElementsByClassName("info svelte-1hsacpa");
+        let pp2 = document.getElementsByClassName("pp")
+        let ppBack = document.getElementsByClassName("stat ranked svelte-1hsacpa");
 
         // Update Map Labels on Player Pages and Ranked List
-        updateMap(easyMaps)
-        updateMap(normalMaps)
-        updateMap(hardMaps)
-        updateMap(expertMaps)
-        updateMap(expertPlusMaps)
+        if(Enable_SR_Label_Recolor){
+            updateMapLabel(allMaps);
+        }
 
         // Update Map Labels on actual Map Pages
-        updateMap(easyLabel)
-        updateMap(normalLabel)
-        updateMap(hardLabel)
-        updateMap(expertLabel)
-        updateMap(expertPlusLabel)
+        if(Enable_SR_Label_Recolor){
+            updateMapLabel(easyLabel);
+            updateMapLabel(normalLabel);
+            updateMapLabel(hardLabel);
+            updateMapLabel(expertLabel);
+            updateMapLabel(expertPlusLabel);
+        }
+
+        // Update PP Values on Player Pages
+        if(Enable_PP_Recolor){
+            updatePP(pp, ppBack)
+            updatePPLeaderboard(pp2)
+        }
     }
 })
 
