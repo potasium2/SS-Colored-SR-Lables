@@ -10,7 +10,7 @@
 #### 1.2:
 - Added actuators that can enable features more easily
 - Added PP gradient and alternate leaderboard PP colors
-- Added a log_13 Function that can simplify Star Ratings and make front pages look more diverse
+- Added a log_13 Function to try and simplify star ratings a bit
 
 ## Potential Future Plans
 - Make all non-ranked maps have their own singular color so they don't stand out
