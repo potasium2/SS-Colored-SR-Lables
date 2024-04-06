@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Scoresaber SR Colored Labels
 // @namespace    SS Star Rating Color
-// @version      1.2
+// @version      1.2.1
 // @description  Changes the Star Rating difficulty label colors to represent the actual Star Rating of the map
 // @author       potasium_
 // @updateURL    https://github.com/potasium2/SS-Colored-SR-Lables/blob/main/Scoresaber-Colored-Labels.js
@@ -10,9 +10,9 @@
 // ==/UserScript==
 
 let Enable_PP_Recolor = true; // Enables PP Recoloring on both profiles and leaderboards
-let PP_Leaderboard_Color = "rgb(4, 146, 232)" // Score saber default is rgb(137,146,232)
+let PP_Leaderboard_Color = "rgb(37, 146, 232)" // Score saber default is rgb(137, 146, 232)
 let Enable_SR_Label_Recolor = true; // Enables Star Rating Label Recoloring
-let Simplified_Star_Ratings = false; // Compresses Star Ratings by a Log_13 Curve So Front Pages can be more diverse (i;e 13 Stars = 10 Stars)
+let Simplified_Star_Ratings = false; // Compresses Star Ratings by an exponential Curve to try and simplify Star Ratings a bit (i;e 13 Stars = ~10.5 Stars)
 
 // Color Interpolation Code
 function getLerpedColor(points, t) {
@@ -77,7 +77,8 @@ let pointsAlternative = [
     [9, [230, 12, 124]],
     [9.5, [126, 0, 186]],
     [10, [0, 35, 148]],
-    [10.25, [0, 0, 0]],
+    [11, [0, 0, 0]],
+    [14, [0, 0, 0]],
 ];
 
 
@@ -94,16 +95,12 @@ let PPPoints = [
     [800, [0, 0, 0]],
 ];
 
-function getBaseLog(x, y) {
-  return Math.log(y) / Math.log(x);
-}
-
 // Map Lable Update Code
 function updateMapLabel(Maps) {
     for(let i = 0; i < Maps.length; i++) {
         let starRating = String(Maps[i].innerHTML).slice(0, -1);
         if(!Maps[i].style.backgroundColor && Simplified_Star_Ratings){
-            Maps[i].innerHTML = String(Math.round((10 * getBaseLog(14, Number(starRating) + 1)) * 100) / 100) + "★";
+            Maps[i].innerHTML = String(Math.round(0.196 * Math.pow(starRating, 1.55) * 100) / 100) + "★";
         }
         starRating = String(Maps[i].innerHTML).slice(0, -1);
         let BackColor = getLerpedColor(points, starRating);
