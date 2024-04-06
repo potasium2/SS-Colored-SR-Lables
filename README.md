@@ -11,6 +11,8 @@
 - Added actuators that can enable features more easily
 - Added PP gradient and alternate leaderboard PP colors
 - Added a log_13 Function to try and simplify star ratings a bit
+  #### 1.2.1:
+  - Changed the log_13 Curve to an exponetial Curve
 
 ## Potential Future Plans
 - Make all non-ranked maps have their own singular color so they don't stand out
