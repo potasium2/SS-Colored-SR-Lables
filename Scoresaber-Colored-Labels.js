@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Scoresaber SR Colored Labels
 // @namespace    SS Star Rating Color
-// @version      1.2.1
+// @version      1.2.2
 // @description  Changes the Star Rating difficulty label colors to represent the actual Star Rating of the map
 // @author       potasium_
 // @updateURL    https://github.com/potasium2/SS-Colored-SR-Lables/blob/main/Scoresaber-Colored-Labels.js
@@ -10,8 +10,8 @@
 // ==/UserScript==
 
 let Enable_PP_Recolor = true; // Enables PP Recoloring on both profiles and leaderboards
-let PP_Leaderboard_Color = "rgb(37, 146, 232)" // Score saber default is rgb(137, 146, 232)
 let Enable_SR_Label_Recolor = true; // Enables Star Rating Label Recoloring
+let PP_Leaderboard_Color = "rgb(37, 146, 232)" // Score saber default is rgb(137,146,232)
 let Simplified_Star_Ratings = false; // Compresses Star Ratings by an exponential Curve to try and simplify Star Ratings a bit (i;e 13 Stars = ~10.5 Stars)
 
 // Color Interpolation Code
@@ -57,7 +57,7 @@ let points = [
     [1, [59, 225, 237]],
     [2.5, [51, 239, 182]],
     [5, [35, 236, 55]],
-    [7, [255, 233, 45]],
+    [7, [222, 200, 45]],
     [9, [255, 132, 0]],
     [10, [224, 5, 5]],
     [11, [230, 12, 124]],
@@ -66,12 +66,13 @@ let points = [
     [14, [0, 0, 0]],
 ];
 
+// Alternative Star Rating Points for Simplified SR
 let pointsAlternative = [
     [0, [59, 225, 237]],
     [2.5, [59, 225, 237]],
     [5, [51, 239, 182]],
     [6, [35, 236, 55]],
-    [7, [255, 233, 45]],
+    [7, [222, 200, 45]],
     [8, [255, 132, 0]],
     [8.5, [224, 5, 5]],
     [9, [230, 12, 124]],
@@ -81,21 +82,22 @@ let pointsAlternative = [
     [14, [0, 0, 0]],
 ];
 
-
+// PP Curve
 let PPPoints = [
-    [0, [255, 175, 175]],
-    [50, [255, 175, 144]],
-    [100, [249, 137, 0]],
-    [200, [173, 205, 1]],
-    [300, [14, 198, 0]],
-    [400, [0, 216, 148]],
-    [500, [0, 35, 148]],
-    [600, [128, 0, 175]],
-    [700, [80, 0, 0]],
-    [800, [0, 0, 0]],
+    [0, [205, 175, 175]],
+    [55, [255, 175, 144]],
+    [110, [249, 137, 0]],
+    [220, [173, 205, 1]],
+    [330, [14, 198, 0]],
+    [440, [0, 216, 148]],
+    [550, [0, 35, 148]],
+    [660, [128, 0, 175]],
+    [770, [80, 0, 35]],
+    [880, [45, 0, 0]],
+    [1000, [0, 0, 0]],
 ];
 
-// Map Lable Update Code
+// Map Label Update Code
 function updateMapLabel(Maps) {
     for(let i = 0; i < Maps.length; i++) {
         let starRating = String(Maps[i].innerHTML).slice(0, -1);
