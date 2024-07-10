@@ -13,9 +13,13 @@
 - Added a log_13 Function to try and simplify star ratings a bit
   #### 1.2.1:
   - Changed the log_13 Curve to an exponetial Curve
+  #### 1.2.2:
+  - Changed the PP Curve so 800+ Scores don't break the recolor
+  - Changed the default 7 Star color to a darker yellow to make text more legible
 
 ## Potential Future Plans
 - Make all non-ranked maps have their own singular color so they don't stand out
+- Put the difficulty label else where so its easier to tell which map a score is set on
 - ~~Add simple actuators to enable certain things within code~~
 - ~~Add color gradient to PP Values as well (Maybe)~~
 - Give all Spectral ranked maps a special Rainbow diff label
